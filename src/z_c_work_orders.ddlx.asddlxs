@@ -1,0 +1,136 @@
+@Metadata.layer: #CORE
+
+//Step1.
+@UI.headerInfo:{
+typeName: 'Work Order',
+typeNamePlural: 'Work Orders',
+
+
+title:{ value: 'workorder', type: #STANDARD },
+description:{ value: 'ktext',type: #STANDARD }
+
+}
+
+//Step2
+@Search.searchable: true
+annotate view Z_C_WORK_ORDERS with
+{
+
+  @UI.facet: [
+
+  //Data Point for Status
+  {
+  id:'StatusDataPoint',
+  type:#DATAPOINT_REFERENCE,
+  targetQualifier: 'Status',
+  purpose: #HEADER
+  },
+
+  //Data Point for Planned Cost
+  {
+  id:'PlannedCost',
+  type:#DATAPOINT_REFERENCE,
+  targetQualifier: 'PlannedCost',
+  purpose: #HEADER
+  },
+
+  //Data Point for Actual Cost
+    {
+  id:'ActualCost',
+  type:#DATAPOINT_REFERENCE,
+  targetQualifier: 'ActualCost',
+  purpose: #HEADER
+  },
+
+  //Data Point for Deviation %
+  {
+  id:'Deviation',
+  type:#DATAPOINT_REFERENCE,
+  targetQualifier: 'Deviation',
+  purpose: #HEADER
+  },
+
+  //General Information tab with 2 Sections ( Orderdata,Admin Data )
+  {
+  id:'GeneralFacet',
+  type: #COLLECTION,
+  purpose: #STANDARD,
+  label: 'General Information'
+  },
+
+  { id: 'Section1',
+  label: 'Order Data',
+  parentId: 'GeneralFacet',
+  type: #IDENTIFICATION_REFERENCE,
+  purpose: #STANDARD,
+  targetQualifier: 'OrderData'
+  },
+
+  { id: 'Section2',
+  label: 'Admin Info.',
+  type: #FIELDGROUP_REFERENCE,
+  parentId: 'GeneralFacet',
+  purpose: #STANDARD,
+  targetQualifier: 'AdminData'
+  },
+
+  {
+  id:'Operations',
+  label: 'Operation Details',
+  type: #LINEITEM_REFERENCE,
+  purpose: #STANDARD,
+  targetElement: '_toOperations'
+
+  }
+
+
+
+  ]
+  
+  @UI.lineItem: [{ position: 10 ,label: 'Work Order',importance: #HIGH},
+                 { type: #FOR_ACTION , dataAction: 'BOPF:CONFIRM_STATUS',position: 10,label: 'Set to Confirm'}]
+  workorder;
+  @Search:{ defaultSearchElement: true,fuzzinessThreshold: 0.7,ranking: #HIGH }
+  @UI.identification: [{ position: 10,label: 'Work Order Description',importance: #HIGH }]
+  ktext;
+
+  @Search:{ defaultSearchElement: true,fuzzinessThreshold: 0.7,ranking: #MEDIUM }
+  @UI.lineItem: [{ position: 20,label: 'Equipment',importance: #HIGH }]
+  @UI.selectionField: [{ position: 10 }]
+  @Consumption.valueHelpDefinition: [{ entity:{ name: 'I_Equipment',element: 'Equipment' } }]
+//  @Consumption.filter:{ mandatory: true }
+  equnr;
+
+  @UI.lineItem: [{ position: 30,label: 'Status', importance: #HIGH,criticality: 'statusCriticality' }]
+  @UI.dataPoint:{ title: 'Status',criticality: 'statusCriticality',qualifier: 'Status' }
+  @UI.identification: [{ position: 20,label: 'Status' }]
+  astnr;
+
+  @UI.lineItem: [{ position: 40, label: 'Planned Cost',importance: #HIGH }]
+  @UI.dataPoint:{ title: 'Planned Cost',qualifier: 'PlannedCost' }
+  @UI.identification: [{ position: 30,label: 'Planned Cost'}]
+  pl_cost;
+
+  @UI.lineItem: [{ position: 50,label: 'Actual Cost', importance: #HIGH,criticality: 'costCriticality' }]
+  @UI.dataPoint:{ title: 'Actual Cost',qualifier: 'ActualCost',criticality: 'costCriticality' }
+  @UI.identification: [{ position: 40,label: 'Actual Cost' }]
+  act_cost;
+
+  @UI.dataPoint:{ title: 'Deviation %',qualifier: 'Deviation',criticality: 'costCriticality' }
+  deviationPercentage;
+
+  @UI.fieldGroup: [{ position: 10,label: 'Created By',importance: #HIGH,qualifier: 'AdminData' }]
+  ernam;
+
+  @UI.fieldGroup: [{ position: 20,label: 'Created On',importance: #HIGH,qualifier: 'AdminData' }]
+  erdat;
+
+  //    @UI.identification: [{ position: 10 }]
+  //    ernam;
+
+
+
+
+
+
+}
